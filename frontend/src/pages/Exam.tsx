@@ -1,81 +1,104 @@
-import { useState, useEffect } from "react";
-import "./Exam.css";
+import React, { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-// Define the structure for each question
-interface Question {
-  questionText: string;
-  options: string[];
-  correctAnswer: string;
-}
-
-// Define the structure for each exam (including subject)
-interface Exam {
+interface ExamFormData {
   title: string;
-  questions: Question[];
+  date: string;
+  subject: string;  // Add subject field to form data
 }
 
 export const Exam = () => {
-  const [exams, setExams] = useState<Exam[]>([]);
-  const [previewExam, setPreviewExam] = useState<Exam | null>(null);
+  const [formData, setFormData] = useState<ExamFormData>({
+    title: "",
+    date: "",
+    subject: "",  // Initialize subject field
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
-  // Fetch saved exams from localStorage
-  useEffect(() => {
-    const savedExams = JSON.parse(localStorage.getItem("examsCreated") || "[]");
-    setExams(savedExams);
-  }, []);
-
-  // Handle previewing an exam
-  const previewExamHandler = (exam: Exam) => {
-    setPreviewExam(exam); // Set the selected exam for preview
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   };
 
-  // Handle going back to the list of exams
-  const goBackToExams = () => {
-    setPreviewExam(null); // Set previewExam to null to go back to the exam list
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/api/v1/exam",  // Ensure this URL matches your backend route
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      console.log("Exam created successfully:", response.data);
+      navigate("/exam");  // Redirect to another page after creation
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("An unexpected error occurred.");
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <div className="exam-page-container">
-      <h1>Choose Your Exam</h1>
-
-      {/* If an exam is selected for preview, show it */}
-      {previewExam ? (
-        <div className="exam-preview">
-          <button onClick={goBackToExams}>Back to Exam List</button>
-          <h2>{previewExam.title}</h2>
-          <div className="questions-preview">
-            {previewExam.questions.length === 0 ? (
-              <p>No questions available for this exam.</p>
-            ) : (
-              previewExam.questions.map((question, index) => (
-                <div key={index} className="question-container">
-                  <p>
-                    <strong>{question.questionText}</strong>
-                  </p>
-                  <ul>
-                    {question.options.map((option, optionIndex) => (
-                      <li key={optionIndex}>{option}</li>
-                    ))}
-                  </ul>
-                  <p>Correct Answer: {question.correctAnswer}</p>
-                </div>
-              ))
-            )}
-          </div>
+    <div>
+      <h1>Create Exam</h1>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label htmlFor="title">Exam Title</label>
+          <input
+            type="text"
+            id="title"
+            name="title"
+            value={formData.title}
+            onChange={handleInputChange}
+            required
+          />
         </div>
-      ) : (
-        // Display the list of exams if no exam is selected for preview
-        exams.length === 0 ? (
-          <p>No exams available. Please create an exam first.</p>
-        ) : (
-          exams.map((exam, index) => (
-            <div key={index} className="exam-container">
-              <h3>{exam.title}</h3>
-              <button onClick={() => previewExamHandler(exam)}>Preview Exam</button>
-            </div>
-          ))
-        )
-      )}
+        <div>
+          <label htmlFor="date">Exam Date</label>
+          <input
+            type="datetime-local"
+            id="date"
+            name="date"
+            value={formData.date}
+            onChange={handleInputChange}
+            required
+          />
+        </div>
+        <div>
+          <label htmlFor="subject">Subject</label>
+          <input
+            type="text"
+            id="subject"
+            name="subject"
+            value={formData.subject}
+            onChange={handleInputChange}
+            required
+          />
+        </div>
+        {error && <div style={{ color: "red" }}>{error}</div>}
+        <div>
+          <button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Submitting..." : "Create Exam"}
+          </button>
+        </div>
+      </form>
     </div>
   );
 };

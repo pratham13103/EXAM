@@ -1,7 +1,7 @@
-// index.ts (Main entry point for the app)
-import express from "express";
-import cors from "cors";
-import rootRouter from "./routes"; // Import the root router from 'routes' folder
+// src/index.ts (Main entry point for the app)
+import express from 'express';
+import cors from 'cors';
+import rootRouter from './routes'; // Import the root router from 'routes' folder
 
 const app = express();
 
@@ -12,7 +12,7 @@ app.use(cors({
 app.use(express.json());
 
 // Use /api/v1 prefix for all routes
-app.use("/api/v1", rootRouter);
+app.use("/api/v1", rootRouter);  // This will map /api/v1/* to the relevant router files
 
 app.listen(3000, () => {
   console.log("Server running on http://localhost:3000");

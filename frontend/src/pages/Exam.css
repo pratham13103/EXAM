@@ -1,82 +1,80 @@
+/* Exam.css */
 .exam-container {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 20px;
-    font-family: Arial, sans-serif;
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  }
-  
-  .exam-title {
-    text-align: center;
-    margin-bottom: 20px;
-    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f4f7fc;
+    font-family: 'Arial', sans-serif;
   }
   
   .exam-form {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 500px;
+    margin: 1rem;
   }
   
-  .question-container {
-    padding: 10px;
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+  .exam-form h1 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-size: 2rem;
+    color: #333;
   }
   
-  .question-text {
-    font-size: 16px;
+  .exam-form div {
+    margin-bottom: 1rem;
+  }
+  
+  .exam-form label {
+    display: block;
+    margin-bottom: 0.5rem;
     font-weight: bold;
-    margin-bottom: 10px;
-    color: #444;
-  }
-  
-  .options-container {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  
-  .option-item {
-    display: flex;
-    align-items: center;
-  }
-  
-  .option-label {
-    margin-left: 8px;
     color: #555;
   }
   
-  .submit-button {
-    padding: 10px 15px;
-    font-size: 16px;
-    font-weight: bold;
-    color: #fff;
-    background-color: #4caf50;
+  .exam-form input {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    box-sizing: border-box;
+  }
+  
+  .exam-form input:focus {
+    border-color: #4a90e2;
+    outline: none;
+  }
+  
+  .exam-form button {
+    width: 100%;
+    padding: 0.8rem;
+    background-color: #4a90e2;
+    color: white;
     border: none;
     border-radius: 4px;
+    font-size: 1.1rem;
     cursor: pointer;
-    align-self: flex-end;
+    transition: background-color 0.3s;
   }
   
-  .submit-button:hover {
-    background-color: #45a049;
+  .exam-form button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
   }
   
-  .results-container {
-    margin-top: 20px;
-    padding: 15px;
-    background-color: #e8f5e9;
-    border: 1px solid #c8e6c9;
-    border-radius: 4px;
+  .exam-form button:hover {
+    background-color: #357abd;
   }
   
-  .results-container p {
-    margin: 5px 0;
-    color: #2e7d32;
+  .exam-form .error {
+    color: red;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    text-align: center;
   }
   

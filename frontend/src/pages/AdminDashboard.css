@@ -1,0 +1,91 @@
+/* AdminDashboard.css */
+
+/* Container for the whole dashboard */
+.dashboard-container {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f7fc;
+    padding: 30px;
+    min-height: 100vh;
+  }
+  
+  /* Header */
+  .dashboard-header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  
+  .dashboard-header h1 {
+    font-size: 2.5rem;
+    color: #333;
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+  
+  .dashboard-header h2 {
+    font-size: 1.25rem;
+    color: #888;
+    margin-top: 0;
+  }
+  
+  /* Dashboard content section */
+  .dashboard-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    justify-items: center;
+    margin-top: 20px;
+  }
+  
+  .dashboard-card {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    text-align: center;
+    transition: transform 0.3s ease;
+  }
+  
+  .dashboard-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .dashboard-card h3 {
+    font-size: 2rem;
+    color: #4CAF50;
+    margin: 0;
+    font-weight: 700;
+  }
+  
+  .dashboard-card p {
+    font-size: 1.2rem;
+    color: #555;
+    margin-top: 5px;
+  }
+  
+  /* Loading state */
+  .loading {
+    font-size: 1.5rem;
+    color: #888;
+    text-align: center;
+    margin-top: 50px;
+  }
+  
+  /* Media Queries for responsiveness */
+  @media (max-width: 768px) {
+    .dashboard-container {
+      padding: 20px;
+    }
+  
+    .dashboard-header h1 {
+      font-size: 2rem;
+    }
+  
+    .dashboard-card h3 {
+      font-size: 1.75rem;
+    }
+  
+    .dashboard-card p {
+      font-size: 1rem;
+    }
+  }
+  

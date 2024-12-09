@@ -1,85 +1,54 @@
-import express from "express";
-import nodemailer from "nodemailer";
-import { authMiddleware } from "../middleware";
+import express, { Request, Response, NextFunction } from "express";
+import { prisma } from "../prismaClient"; // Ensure the prisma client is correctly imported
+import jwt from "jsonwebtoken"; // JWT package for verifying token
+
 const router = express.Router();
 
-// Sample in-memory data for questions (ideally this would be in a database)
-const questions = [
-  {
-    id: 1,
-    questionText: "What is the capital of India?",
-    options: ["New Delhi", "Mumbai", "Kolkata", "Chennai"],
-    correctAnswer: "New Delhi",
-  },
-  {
-    id: 2,
-    questionText: "Which planet is known as the Red Planet?",
-    options: ["Earth", "Mars", "Jupiter", "Venus"],
-    correctAnswer: "Mars",
-  },
-  // Add more questions as needed
-];
+// Middleware to check if the user is authenticated and an admin
+const isAdmin = (req: Request, res: Response, next: NextFunction): void => {
+  const token = req.headers.authorization?.split(" ")[1]; // Extract the token from the Authorization header
 
-// Create a transport for sending emails
-const transporter = nodemailer.createTransport({
-  service: "gmail", // You can use any email service here
-  auth: {
-    user: "your-email@gmail.com", // Replace with your email
-    pass: "your-email-password",  // Replace with your email password or app-specific password
-  },
-});
-
-// Route to fetch exam questions
-router.get("/questions", authMiddleware, (req, res) => {
-  res.json({ questions });
-});
-
-// Route to submit answers and calculate results
-router.post("/submit", authMiddleware, (req, res) => {
-  const { answers } = req.body; // answers should be an array of the selected answers
-
-  let correct = 0;
-  let wrong = 0;
-  let notAttempted = 0;
-
-  answers.forEach((answer: string, index: number) => {
-    if (!answer) {
-      notAttempted++;
-    } else if (answer === questions[index].correctAnswer) {
-      correct++;
-    } else {
-      wrong++;
-    }
-  });
-
-  const score = (correct / questions.length) * 100;
-
-  res.json({
-    correctAnswers: correct,
-    wrongAnswers: wrong,
-    notAttempted: notAttempted,
-    score: score.toFixed(2),
-  });
-});
-
-// Route to grant access to the exam
-router.post("/grant-access", async (req, res) => {
-  const { studentEmail, examName } = req.body; // Get student's email and exam name
-
-  const mailOptions = {
-    from: "your-email@gmail.com",
-    to: studentEmail,
-    subject: "Exam Access Granted",
-    text: `You have been granted access to the exam: ${examName}. Please log in to access and take the exam.`,
-  };
+  if (!token) {
+    res.status(401).json({ error: "Unauthorized" }); // No token provided
+    return; // Ensure we don't continue to the next middleware if no token is provided
+  }
 
   try {
-    // Send email to the student
-    await transporter.sendMail(mailOptions);
-    res.status(200).json({ message: "Email sent successfully!" });
+    // Verify the JWT token and extract the user role from it
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as {
+      userId: string;
+      role: string;
+    };
+
+    // Check if the user role is "admin"
+    if (decoded.role !== "admin") {
+      res.status(403).json({ error: "Forbidden: Admins only" }); // User is not an admin
+      return; // Prevent further middleware execution
+    }
+
+    // Attach user data to the request object
+    req.user = decoded; // You can add this if you want to use the user information in the next handlers
+
+    next(); // Proceed to the next middleware or route handler
   } catch (error) {
-    console.error("Error sending email:", error);
-    res.status(500).json({ message: "Failed to send email", error });
+    res.status(401).json({ error: "Invalid or expired token" }); // Token verification failed
+  }
+};
+
+// Admin dashboard route
+router.get("/dashboard", isAdmin, async (req: Request, res: Response) => {
+  try {
+    // Count the total number of users in the database
+    const userCount = await prisma.user.count();
+
+    // Return the user count in the response
+    res.json({
+      message: "Admin Dashboard Data",
+      userCount,
+    });
+  } catch (error) {
+    // Handle any errors during the database operation
+    res.status(500).json({ error: "Failed to fetch dashboard data" });
   }
 });
 

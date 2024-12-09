@@ -14,35 +14,15 @@ export const Auth = ({ type }: { type: "Sign up" | "Sign in" }) => {
     })
     async function sendRequest() {
         try {
-            const response = await axios.post(
-                `${BACKEND_URL}/api/v1/user/${type === 'Sign up' ? 'signup' : 'signin'}`,
-                userInputs
-            );
-    
-            const token = response.data.token;
-            const role = response.data.role; // Ensure role is present in the response
-            localStorage.setItem('token', 'Bearer ' + token);
-    
-            // Navigate to the respective dashboard based on the role
-            if (role === 'Student') {
-                navigate('/student-dashboard');
-            } else if (role === 'Teacher') {
-                navigate('/teacher-dashboard');
-            } else if (role === 'Admin') {
-                navigate('/admin-dashboard');
-            } else {
-                // Default fallback if no role matches
-                navigate('/exam'); 
-            }
-        } catch (error: any) {
-            console.error(error);
-            alert(
-                `Error while ${type === 'Sign up' ? 'signing up' : 'signing in'}: ` +
-                (error.response?.data?.message || error.message)
-            );
+            const response = await axios.post(`${BACKEND_URL}/api/v1/user/${type == 'Sign up' ? "signup" : "signin"}`, userInputs);
+            const jwt = response.data.jwt;
+            localStorage.setItem("token", "Bearer " + jwt);
+            navigate("/exam")
+        } catch (error) {
+            console.log(error);
+            alert("Error while signing up" + error)
         }
     }
-
     return <div className="">
         <div className="flex flex-col items-center justify-center min-h-screen ">
             <div className="w-1/2">

@@ -13,6 +13,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+
 model User {
   id        String   @id @default(uuid())
   name      String?
@@ -22,6 +23,24 @@ model User {
   role      String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  admin     Admin?   @relation("UserToAdmin")
+}
+
+model Admin {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user      User     @relation("UserToAdmin", fields: [userId], references: [id])
 }
 
 
+model Exam {
+  id        String   @id @default(uuid())
+  title     String
+  subject   String   // New field for subject
+  date      DateTime
+  createdAt DateTime @default(now())
+}
