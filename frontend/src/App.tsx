@@ -1,12 +1,9 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { Signup } from './pages/Signup';
-import { Signin } from './pages/Signin';
-import { Exam } from './pages/Exam';
-import { StudentDashboard } from './pages/StudentDashboard';
-import { TeacherDashboard } from './pages/TeacherDashboard';
-import { AdminDashboard } from './pages/AdminDashboard/AdminDashboard';
-import { ExamCreation } from "./pages/ExamCreation";
-import { ExamPreview } from "./pages/ExamPreview";
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { Signup } from './pages/Signup'
+import { Signin } from './pages/Signin'
+import './App.css'
+import { Exam } from './pages/Exam'
+import AdminDashboard from "./pages/AdminDashboard";
 
 import './App.css';
 
